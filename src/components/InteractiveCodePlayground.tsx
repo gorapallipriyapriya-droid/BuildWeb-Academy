@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, RotateCcw, Copy, Check, Terminal, ExternalLink } from 'lucide-react';
+import { Play, RotateCcw, Copy, Check, Terminal, ExternalLink, Smartphone, Tablet, Monitor, Sparkles } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface PlaygroundTemplate {
   name: string;
@@ -239,6 +240,8 @@ export const InteractiveCodePlayground: React.FC = () => {
   const [consoleLogs, setConsoleLogs] = useState<string[]>([]);
   const [copied, setCopied] = useState(false);
   const [showConsole, setShowConsole] = useState(false);
+  const [viewportMode, setViewportMode] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
+  const [isRunning, setIsRunning] = useState(false);
 
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
@@ -250,8 +253,12 @@ export const InteractiveCodePlayground: React.FC = () => {
   };
 
   const runCode = () => {
+    setIsRunning(true);
     setConsoleLogs([]);
-    if (!iframeRef.current) return;
+    if (!iframeRef.current) {
+      setIsRunning(false);
+      return;
+    }
 
     const source = `
       <!DOCTYPE html>
@@ -286,6 +293,7 @@ export const InteractiveCodePlayground: React.FC = () => {
       </html>
     `;
     iframeRef.current.srcdoc = source;
+    setTimeout(() => setIsRunning(false), 250);
   };
 
   useEffect(() => {
@@ -312,38 +320,52 @@ export const InteractiveCodePlayground: React.FC = () => {
   };
 
   return (
-    <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-sm">
+    <div className="bg-[#111111] rounded-3xl border border-white/[0.08] overflow-hidden shadow-[0_0_40px_rgba(0,0,0,0.8)]">
       {/* Header bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5 p-1 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+      <div className="flex flex-wrap items-center justify-between gap-4 p-4 sm:p-5 border-b border-white/[0.08] bg-[#0A0A0A]">
+        <div className="flex flex-wrap items-center gap-3">
+          {/* File Tab Selectors */}
+          <div className="flex items-center gap-1.5 p-1 bg-[#18181B] rounded-xl border border-white/[0.08]">
             <button
               onClick={() => setActiveTab('html')}
-              className={`px-3 py-1 text-xs font-mono font-medium rounded-md transition ${activeTab === 'html' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}`}
+              className={`px-3.5 py-1.5 text-xs font-mono font-bold rounded-lg transition-all cursor-pointer ${
+                activeTab === 'html'
+                  ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-[0_0_12px_rgba(59,130,246,0.5)]'
+                  : 'text-zinc-400 hover:text-white'
+              }`}
             >
-              HTML
+              index.html
             </button>
             <button
               onClick={() => setActiveTab('css')}
-              className={`px-3 py-1 text-xs font-mono font-medium rounded-md transition ${activeTab === 'css' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}`}
+              className={`px-3.5 py-1.5 text-xs font-mono font-bold rounded-lg transition-all cursor-pointer ${
+                activeTab === 'css'
+                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-[0_0_12px_rgba(139,92,246,0.5)]'
+                  : 'text-zinc-400 hover:text-white'
+              }`}
             >
-              CSS
+              styles.css
             </button>
             <button
               onClick={() => setActiveTab('js')}
-              className={`px-3 py-1 text-xs font-mono font-medium rounded-md transition ${activeTab === 'js' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}`}
+              className={`px-3.5 py-1.5 text-xs font-mono font-bold rounded-lg transition-all cursor-pointer ${
+                activeTab === 'js'
+                  ? 'bg-gradient-to-r from-purple-600 to-cyan-500 text-white shadow-[0_0_12px_rgba(6,182,212,0.5)]'
+                  : 'text-zinc-400 hover:text-white'
+              }`}
             >
-              JS
+              app.js
             </button>
           </div>
 
-          <div className="hidden sm:flex items-center gap-1 text-xs text-slate-500">
-            <span>Templates:</span>
+          {/* Preset Starter Templates */}
+          <div className="hidden md:flex items-center gap-1.5 text-xs text-zinc-400">
+            <span className="font-semibold text-[11px] text-zinc-500">Presets:</span>
             {templates.map((tmpl) => (
               <button
                 key={tmpl.name}
                 onClick={() => loadTemplate(tmpl)}
-                className="px-2 py-0.5 rounded text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 transition"
+                className="px-2.5 py-1 rounded-lg text-[11px] font-medium text-zinc-300 bg-[#18181B] hover:bg-[#202024] hover:text-white border border-white/[0.08] transition cursor-pointer"
               >
                 {tmpl.name}
               </button>
@@ -351,42 +373,75 @@ export const InteractiveCodePlayground: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        {/* Viewport size controls & Actions */}
+        <div className="flex items-center gap-2.5">
+          {/* Responsive viewport switcher */}
+          <div className="hidden sm:flex items-center p-1 bg-[#18181B] rounded-xl border border-white/[0.08]">
+            <button
+              onClick={() => setViewportMode('desktop')}
+              className={`p-1.5 rounded-lg transition cursor-pointer ${viewportMode === 'desktop' ? 'bg-blue-600 text-white shadow-[0_0_10px_rgba(59,130,246,0.4)]' : 'text-zinc-400 hover:text-white'}`}
+              title="Desktop View"
+            >
+              <Monitor className="w-3.5 h-3.5" />
+            </button>
+            <button
+              onClick={() => setViewportMode('tablet')}
+              className={`p-1.5 rounded-lg transition cursor-pointer ${viewportMode === 'tablet' ? 'bg-blue-600 text-white shadow-[0_0_10px_rgba(59,130,246,0.4)]' : 'text-zinc-400 hover:text-white'}`}
+              title="Tablet View"
+            >
+              <Tablet className="w-3.5 h-3.5" />
+            </button>
+            <button
+              onClick={() => setViewportMode('mobile')}
+              className={`p-1.5 rounded-lg transition cursor-pointer ${viewportMode === 'mobile' ? 'bg-blue-600 text-white shadow-[0_0_10px_rgba(59,130,246,0.4)]' : 'text-zinc-400 hover:text-white'}`}
+              title="Mobile View"
+            >
+              <Smartphone className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
           <button
             onClick={() => setShowConsole(!showConsole)}
-            className={`flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-md border ${showConsole ? 'bg-slate-200 dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white' : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400'}`}
+            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl border transition cursor-pointer ${
+              showConsole
+                ? 'bg-[#202024] border-white/20 text-white'
+                : 'border-white/[0.08] bg-[#18181B] text-zinc-400 hover:text-white hover:bg-[#202024]'
+            }`}
           >
-            <Terminal className="w-3.5 h-3.5" />
+            <Terminal className="w-3.5 h-3.5 text-cyan-400" />
             <span>Console ({consoleLogs.length})</span>
           </button>
+
           <button
             onClick={copyCurrentCode}
-            className="p-1.5 rounded-md border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+            className="p-2 rounded-xl border border-white/[0.08] bg-[#18181B] text-zinc-400 hover:text-white hover:bg-[#202024] transition cursor-pointer"
             title="Copy code"
           >
-            {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
+            {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
           </button>
+
           <button
             onClick={runCode}
-            className="flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-md bg-blue-600 text-white hover:bg-blue-700 shadow-xs"
+            disabled={isRunning}
+            className="flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl btn-neon-primary cursor-pointer"
           >
-            <Play className="w-3.5 h-3.5" />
-            <span>Run</span>
+            <Play className={`w-3.5 h-3.5 ${isRunning ? 'animate-spin' : ''}`} />
+            <span>Run Code</span>
           </button>
         </div>
       </div>
 
-      {/* Editor & Preview Split */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-slate-200 dark:divide-slate-800 min-h-[460px]">
+      {/* Editor & Preview Split View */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-white/[0.08] min-h-[500px]">
         {/* Code Editor Pane */}
-        <div className="flex flex-col bg-slate-950 text-slate-100">
-          <div className="flex items-center justify-between px-3 py-1.5 bg-slate-900 border-b border-slate-800 text-[11px] font-mono text-slate-400">
-            <span>
-              {activeTab === 'html' && 'index.html'}
-              {activeTab === 'css' && 'styles.css'}
-              {activeTab === 'js' && 'app.js'}
+        <div className="flex flex-col bg-[#0A0A0A] text-zinc-100">
+          <div className="flex items-center justify-between px-4 py-2 bg-[#000000] border-b border-white/[0.08] text-[11px] font-mono text-zinc-400">
+            <span className="text-blue-400 font-bold">
+              {activeTab === 'html' && 'HTML5 Editor'}
+              {activeTab === 'css' && 'CSS3 Stylesheet'}
+              {activeTab === 'js' && 'JavaScript (ES6+) Engine'}
             </span>
-            <span>Editable Editor</span>
+            <span className="text-zinc-500">Live Auto-compiling</span>
           </div>
 
           <textarea
@@ -397,37 +452,63 @@ export const InteractiveCodePlayground: React.FC = () => {
               else setJsCode(e.target.value);
             }}
             spellCheck={false}
-            className="flex-1 w-full p-4 font-mono text-xs bg-slate-950 text-slate-100 resize-none outline-none leading-relaxed min-h-[380px]"
+            className="flex-1 w-full p-5 font-mono text-xs bg-[#0A0A0A] text-zinc-100 resize-none outline-none leading-relaxed min-h-[420px]"
           />
 
           {showConsole && (
-            <div className="h-36 border-t border-slate-800 bg-black/90 p-3 font-mono text-xs overflow-y-auto">
-              <div className="text-slate-500 text-[10px] uppercase font-bold mb-1">Live Console Output</div>
+            <motion.div 
+              initial={{ height: 0 }}
+              animate={{ height: 140 }}
+              className="border-t border-white/[0.08] bg-[#000000] p-3.5 font-mono text-xs overflow-y-auto"
+            >
+              <div className="text-zinc-500 text-[10px] uppercase font-bold mb-1.5 flex items-center justify-between">
+                <span>Interactive Console Output</span>
+                <button onClick={() => setConsoleLogs([])} className="text-zinc-400 hover:text-white cursor-pointer">Clear</button>
+              </div>
               {consoleLogs.length === 0 ? (
-                <span className="text-slate-600 italic">No console logs yet. Use console.log() in JavaScript.</span>
+                <span className="text-zinc-600 italic">No output yet. Call console.log() in your code to view results.</span>
               ) : (
                 consoleLogs.map((log, i) => (
-                  <div key={i} className={`py-0.5 ${log.startsWith('[Error]') ? 'text-red-400' : 'text-emerald-400'}`}>
+                  <div key={i} className={`py-0.5 ${log.startsWith('[Error]') ? 'text-rose-400' : 'text-emerald-400'}`}>
                     {log}
                   </div>
                 ))
               )}
-            </div>
+            </motion.div>
           )}
         </div>
 
         {/* Live Iframe Output Pane */}
-        <div className="flex flex-col bg-white dark:bg-slate-900">
-          <div className="flex items-center justify-between px-3 py-1.5 bg-slate-100 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-[11px] text-slate-600 dark:text-slate-300">
-            <span className="font-medium">Live Browser Preview</span>
-            <span className="text-emerald-600 dark:text-emerald-400 font-mono text-[10px]">● Live rendering</span>
+        <div className="flex flex-col bg-[#050505] overflow-hidden items-center justify-start">
+          <div className="w-full flex items-center justify-between px-4 py-2 bg-[#000000] border-b border-white/[0.08] text-[11px] text-zinc-300">
+            <span className="font-semibold flex items-center gap-1.5">
+              <span>Preview Window</span>
+              <span className="text-zinc-500">({viewportMode})</span>
+            </span>
+            <span className="text-emerald-400 font-mono text-[10px] flex items-center gap-1">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+              <span>GPU Accelerated</span>
+            </span>
           </div>
-          <iframe
-            ref={iframeRef}
-            title="Code Playground Preview"
-            sandbox="allow-scripts"
-            className="w-full flex-1 min-h-[380px] bg-white border-0"
-          />
+
+          <div className="w-full flex-1 p-3 flex justify-center items-stretch overflow-auto">
+            <div
+              className={`transition-all duration-300 bg-white rounded-xl shadow-md overflow-hidden border border-white/[0.1] flex flex-col ${
+                viewportMode === 'mobile'
+                  ? 'w-[375px]'
+                  : viewportMode === 'tablet'
+                  ? 'w-[768px]'
+                  : 'w-full'
+              }`}
+            >
+              <iframe
+                ref={iframeRef}
+                title="Code Playground Preview"
+                sandbox="allow-scripts"
+                className="w-full flex-1 min-h-[420px] bg-white border-0"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>

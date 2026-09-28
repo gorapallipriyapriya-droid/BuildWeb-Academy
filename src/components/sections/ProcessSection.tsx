@@ -1,43 +1,44 @@
 import React, { useState } from 'react';
 import { devProcessSteps } from '../../data/processData';
 import { Layers, CheckCircle2, ArrowRight, Lightbulb, Wrench } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export const ProcessSection: React.FC = () => {
   const [selectedStepNumber, setSelectedStepNumber] = useState<number>(1);
   const activeStep = devProcessSteps.find(s => s.stepNumber === selectedStepNumber) || devProcessSteps[0];
 
   return (
-    <div className="space-y-8 py-6">
+    <div className="space-y-10 py-6">
       {/* Header */}
       <div>
-        <div className="flex items-center gap-2 text-xs font-semibold text-blue-600 dark:text-blue-400">
-          <Layers className="w-4 h-4" />
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#18181B] text-cyan-400 text-xs font-bold uppercase tracking-wider mb-3 border border-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.15)]">
+          <Layers className="w-3.5 h-3.5 text-cyan-400" />
           <span>Professional Software Lifecycle</span>
         </div>
-        <h1 className="text-2xl sm:text-4xl font-bold text-slate-900 dark:text-white mt-1">
-          The 10-Step Website Development Process
+        <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
+          The 10-Step Website <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400">Development Process</span>
         </h1>
-        <p className="text-sm text-slate-600 dark:text-slate-300 mt-2 max-w-3xl leading-relaxed">
+        <p className="text-base text-zinc-400 mt-2 max-w-3xl leading-relaxed">
           From first concept and user requirements to wireframing, architecture, testing, and production deployment. Follow the battle-tested engineering methodology used by leading product teams.
         </p>
       </div>
 
       {/* Process Step Pipeline Buttons */}
-      <div className="flex border-b border-slate-200 dark:border-slate-800 overflow-x-auto pb-2 gap-2">
+      <div className="flex border-b border-white/[0.08] overflow-x-auto pb-3 gap-2">
         {devProcessSteps.map((step) => {
           const isSelected = step.stepNumber === selectedStepNumber;
           return (
             <button
               key={step.stepNumber}
               onClick={() => setSelectedStepNumber(step.stepNumber)}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition border ${
+              className={`flex items-center gap-2 px-3.5 py-2.5 rounded-2xl text-xs font-medium whitespace-nowrap transition-all duration-200 border cursor-pointer ${
                 isSelected
-                  ? 'border-blue-600 bg-blue-50/70 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 font-semibold shadow-xs'
-                  : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:border-slate-300'
+                  ? 'border-blue-500/80 bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-transparent text-white font-bold shadow-[0_0_15px_rgba(59,130,246,0.3)]'
+                  : 'border-white/[0.08] bg-[#111111] text-zinc-300 hover:border-white/20 hover:text-white'
               }`}
             >
               <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-mono font-bold ${
-                isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                isSelected ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-xs' : 'bg-[#18181B] text-zinc-400'
               }`}>
                 {step.stepNumber}
               </span>
@@ -50,28 +51,33 @@ export const ProcessSection: React.FC = () => {
       {/* Step Detail Card */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Main Details */}
-        <div className="lg:col-span-8 p-6 sm:p-8 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs space-y-6">
+        <motion.div 
+          key={activeStep.stepNumber}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="lg:col-span-8 p-6 sm:p-10 rounded-3xl border border-white/[0.08] bg-[#111111] shadow-[0_0_30px_rgba(0,0,0,0.7)] space-y-6"
+        >
           <div>
-            <span className="text-xs font-mono font-bold text-blue-600 dark:text-blue-400 uppercase">
+            <span className="text-xs font-mono font-bold text-cyan-400 uppercase tracking-wider">
               Phase 0{activeStep.stepNumber} of 10
             </span>
-            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mt-1">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-white mt-1">
               {activeStep.title}
             </h2>
-            <p className="text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
+            <p className="text-sm text-zinc-300 mt-2 leading-relaxed">
               {activeStep.description}
             </p>
           </div>
 
           {/* Key Activities */}
-          <div className="space-y-3 pt-4 border-t border-slate-100 dark:border-slate-800">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+          <div className="space-y-3 pt-6 border-t border-white/[0.08]">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-300">
               Core Engineering Activities
             </h3>
-            <ul className="space-y-2">
+            <ul className="space-y-2.5">
               {activeStep.keyActivities.map((act, i) => (
-                <li key={i} className="flex items-start gap-2.5 text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                <li key={i} className="flex items-start gap-2.5 text-xs text-zinc-300 leading-relaxed">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                   <span>{act}</span>
                 </li>
               ))}
@@ -79,15 +85,15 @@ export const ProcessSection: React.FC = () => {
           </div>
 
           {/* Pro Tips */}
-          <div className="p-4 rounded-xl bg-amber-50/50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/60 text-xs space-y-2">
-            <div className="font-semibold text-amber-900 dark:text-amber-200 flex items-center gap-1.5">
-              <Lightbulb className="w-4 h-4 text-amber-500" />
+          <div className="p-5 rounded-2xl bg-gradient-to-r from-amber-500/10 via-purple-500/5 to-transparent border border-amber-500/30 text-xs space-y-2.5">
+            <div className="font-bold text-white flex items-center gap-2">
+              <Lightbulb className="w-4 h-4 text-amber-400" />
               <span>Senior Engineer Insights & Pitfalls to Avoid</span>
             </div>
-            <ul className="space-y-1.5 text-slate-700 dark:text-slate-300">
+            <ul className="space-y-2 text-zinc-300">
               {activeStep.proTips.map((tip, i) => (
                 <li key={i} className="flex items-start gap-2">
-                  <span className="text-amber-600 font-bold">•</span>
+                  <span className="text-amber-400 font-bold">•</span>
                   <span>{tip}</span>
                 </li>
               ))}
@@ -95,36 +101,36 @@ export const ProcessSection: React.FC = () => {
           </div>
 
           {/* Step pagination controls */}
-          <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800 text-xs">
+          <div className="flex items-center justify-between pt-6 border-t border-white/[0.08] text-xs">
             <button
               onClick={() => setSelectedStepNumber(prev => Math.max(1, prev - 1))}
               disabled={selectedStepNumber === 1}
-              className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 disabled:opacity-40 hover:bg-slate-50 dark:hover:bg-slate-800"
+              className="px-4 py-2 rounded-xl border border-white/[0.08] bg-[#18181B] hover:bg-[#202024] text-zinc-300 disabled:opacity-40 transition cursor-pointer"
             >
               Previous Phase
             </button>
-            <span className="text-slate-400 font-mono">Step {selectedStepNumber} / 10</span>
+            <span className="text-zinc-500 font-mono">Step {selectedStepNumber} / 10</span>
             <button
               onClick={() => setSelectedStepNumber(prev => Math.min(10, prev + 1))}
               disabled={selectedStepNumber === 10}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-blue-600 text-white disabled:opacity-40 hover:bg-blue-700"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl btn-neon-primary disabled:opacity-40 font-bold cursor-pointer"
             >
               <span>Next Phase</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <ArrowRight className="w-4 h-4" />
             </button>
           </div>
-        </div>
+        </motion.div>
 
         {/* Sidebar Deliverables & Recommended Tools */}
         <div className="lg:col-span-4 space-y-6">
           {/* Deliverables Card */}
-          <div className="p-6 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs space-y-4">
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+          <div className="p-6 rounded-3xl border border-white/[0.08] bg-[#111111] shadow-xl space-y-4">
+            <h3 className="text-sm font-bold text-white flex items-center gap-1.5">
               <span>Required Deliverables</span>
             </h3>
-            <div className="space-y-2 text-xs">
+            <div className="space-y-2.5 text-xs">
               {activeStep.deliverables.map((deliv, i) => (
-                <div key={i} className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-850 border border-slate-100 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-medium">
+                <div key={i} className="p-3 rounded-xl bg-[#18181B] border border-white/[0.06] text-zinc-300 font-medium">
                   {deliv}
                 </div>
               ))}
@@ -132,14 +138,14 @@ export const ProcessSection: React.FC = () => {
           </div>
 
           {/* Recommended Tools Card */}
-          <div className="p-6 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs space-y-4">
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-              <Wrench className="w-4 h-4 text-blue-500" />
+          <div className="p-6 rounded-3xl border border-white/[0.08] bg-[#111111] shadow-xl space-y-4">
+            <h3 className="text-sm font-bold text-white flex items-center gap-1.5">
+              <Wrench className="w-4 h-4 text-cyan-400" />
               <span>Recommended Tooling</span>
             </h3>
-            <div className="flex flex-wrap gap-1.5">
+            <div className="flex flex-wrap gap-2">
               {activeStep.recommendedTools.map((tool) => (
-                <span key={tool} className="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-mono">
+                <span key={tool} className="px-3 py-1.5 rounded-xl bg-[#18181B] border border-white/[0.08] text-zinc-300 text-xs font-mono">
                   {tool}
                 </span>
               ))}

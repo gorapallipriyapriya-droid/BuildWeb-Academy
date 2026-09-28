@@ -12,33 +12,31 @@ export const InteractiveBoxModel: React.FC = () => {
     ? contentWidth + (padding * 2) + (border * 2)
     : contentWidth;
 
-  const totalRenderedWidth = boxSizing === 'content-box'
-    ? contentWidth + (padding * 2) + (border * 2)
-    : contentWidth;
+  const totalRenderedWidth = totalCalculatedWidth;
 
   const innerContentComputedWidth = boxSizing === 'border-box'
     ? Math.max(0, contentWidth - (padding * 2) - (border * 2))
     : contentWidth;
 
   return (
-    <div className="my-6 p-5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
-      <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-slate-800">
+    <div className="my-6 p-5 rounded-xl border border-white/[0.08] bg-[#0A0A0A] shadow-xl">
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-white/[0.08]">
         <div>
-          <span className="text-xs uppercase tracking-wider font-semibold text-blue-600 dark:text-blue-400">Interactive Visual Sandbox</span>
-          <h4 className="text-base font-bold text-slate-900 dark:text-white mt-0.5">CSS Box Model Explorer</h4>
+          <span className="text-xs uppercase tracking-wider font-semibold text-blue-400">Interactive Visual Sandbox</span>
+          <h4 className="text-base font-bold text-white mt-0.5">CSS Box Model Explorer</h4>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-xs text-slate-500 font-mono">box-sizing:</span>
-          <div className="flex items-center p-0.5 bg-slate-100 dark:bg-slate-800 rounded-lg text-xs">
+          <span className="text-xs text-zinc-400 font-mono">box-sizing:</span>
+          <div className="flex items-center p-0.5 bg-[#18181B] rounded-lg text-xs border border-white/[0.08]">
             <button
               onClick={() => setBoxSizing('border-box')}
-              className={`px-2.5 py-1 rounded font-medium transition-colors ${boxSizing === 'border-box' ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-xs' : 'text-slate-600 dark:text-slate-400'}`}
+              className={`px-2.5 py-1 rounded font-medium transition-colors cursor-pointer ${boxSizing === 'border-box' ? 'bg-blue-600 text-white shadow-[0_0_10px_rgba(59,130,246,0.4)]' : 'text-zinc-400 hover:text-white'}`}
             >
               border-box (Standard)
             </button>
             <button
               onClick={() => setBoxSizing('content-box')}
-              className={`px-2.5 py-1 rounded font-medium transition-colors ${boxSizing === 'content-box' ? 'bg-white dark:bg-slate-700 text-amber-600 dark:text-amber-400 shadow-xs' : 'text-slate-600 dark:text-slate-400'}`}
+              className={`px-2.5 py-1 rounded font-medium transition-colors cursor-pointer ${boxSizing === 'content-box' ? 'bg-amber-600 text-white shadow-[0_0_10px_rgba(245,158,11,0.4)]' : 'text-zinc-400 hover:text-white'}`}
             >
               content-box (Legacy)
             </button>
@@ -48,46 +46,46 @@ export const InteractiveBoxModel: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 my-6 items-center">
         {/* Visual Box Model Diagram */}
-        <div className="lg:col-span-7 flex flex-col items-center justify-center p-4 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 overflow-x-auto min-h-[340px]">
+        <div className="lg:col-span-7 flex flex-col items-center justify-center p-6 bg-[#000000] rounded-xl border border-white/[0.08] overflow-x-auto min-h-[340px]">
           {/* Margin layer */}
           <div 
-            className="p-3 bg-amber-500/15 border border-dashed border-amber-400 rounded-lg text-center transition-all duration-150"
+            className="p-3 bg-amber-500/10 border border-dashed border-amber-500/50 rounded-lg text-center transition-all duration-150"
             style={{ padding: `${Math.max(12, margin * 0.7)}px` }}
           >
-            <span className="text-[11px] font-mono font-semibold text-amber-700 dark:text-amber-300 block mb-1">
+            <span className="text-[11px] font-mono font-semibold text-amber-400 block mb-1">
               MARGIN: {margin}px
             </span>
 
             {/* Border layer */}
             <div 
-              className="p-2.5 bg-yellow-500/20 border-yellow-500/50 rounded-md transition-all duration-150"
+              className="p-2.5 bg-purple-500/15 border-purple-500/50 rounded-md transition-all duration-150"
               style={{ borderWidth: `${border}px`, borderStyle: 'solid' }}
             >
-              <span className="text-[11px] font-mono font-semibold text-yellow-800 dark:text-yellow-200 block mb-1">
+              <span className="text-[11px] font-mono font-semibold text-purple-300 block mb-1">
                 BORDER: {border}px
               </span>
 
               {/* Padding layer */}
               <div 
-                className="bg-emerald-500/20 border border-dashed border-emerald-400 rounded transition-all duration-150"
+                className="bg-emerald-500/15 border border-dashed border-emerald-500/50 rounded transition-all duration-150"
                 style={{ padding: `${Math.max(10, padding * 0.7)}px` }}
               >
-                <span className="text-[11px] font-mono font-semibold text-emerald-800 dark:text-emerald-300 block mb-1">
+                <span className="text-[11px] font-mono font-semibold text-emerald-400 block mb-1">
                   PADDING: {padding}px
                 </span>
 
                 {/* Content layer */}
                 <div 
-                  className="bg-blue-500/25 border border-blue-500 rounded flex flex-col items-center justify-center text-center transition-all duration-150"
+                  className="bg-blue-600/30 border border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.3)] rounded flex flex-col items-center justify-center text-center transition-all duration-150"
                   style={{ 
                     width: `${Math.max(120, innerContentComputedWidth * 0.8)}px`, 
                     height: `${Math.max(60, contentHeight * 0.8)}px` 
                   }}
                 >
-                  <span className="text-xs font-mono font-bold text-blue-800 dark:text-blue-200">
+                  <span className="text-xs font-mono font-bold text-white">
                     CONTENT
                   </span>
-                  <span className="text-[10px] font-mono text-blue-700 dark:text-blue-300 tabular-nums">
+                  <span className="text-[10px] font-mono text-cyan-300 tabular-nums">
                     {innerContentComputedWidth}px × {contentHeight}px
                   </span>
                 </div>
@@ -98,10 +96,10 @@ export const InteractiveBoxModel: React.FC = () => {
 
         {/* Sliders and Calculations */}
         <div className="lg:col-span-5 space-y-4">
-          <div className="p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 space-y-3">
+          <div className="p-4 rounded-xl bg-[#111111] border border-white/[0.08] space-y-3">
             <div className="flex justify-between text-xs">
-              <span className="font-semibold text-slate-700 dark:text-slate-300">Declared Width</span>
-              <span className="font-mono text-blue-600 dark:text-blue-400 tabular-nums">{contentWidth}px</span>
+              <span className="font-semibold text-zinc-300">Declared Width</span>
+              <span className="font-mono text-blue-400 tabular-nums">{contentWidth}px</span>
             </div>
             <input
               type="range"
@@ -109,12 +107,12 @@ export const InteractiveBoxModel: React.FC = () => {
               max={360}
               value={contentWidth}
               onChange={(e) => setContentWidth(Number(e.target.value))}
-              className="w-full accent-blue-600"
+              className="w-full accent-blue-500 cursor-pointer"
             />
 
             <div className="flex justify-between text-xs">
-              <span className="font-semibold text-emerald-700 dark:text-emerald-400">Padding</span>
-              <span className="font-mono text-emerald-600 dark:text-emerald-400 tabular-nums">{padding}px</span>
+              <span className="font-semibold text-emerald-400">Padding</span>
+              <span className="font-mono text-emerald-400 tabular-nums">{padding}px</span>
             </div>
             <input
               type="range"
@@ -122,12 +120,12 @@ export const InteractiveBoxModel: React.FC = () => {
               max={48}
               value={padding}
               onChange={(e) => setPadding(Number(e.target.value))}
-              className="w-full accent-emerald-600"
+              className="w-full accent-emerald-500 cursor-pointer"
             />
 
             <div className="flex justify-between text-xs">
-              <span className="font-semibold text-yellow-700 dark:text-yellow-400">Border</span>
-              <span className="font-mono text-yellow-600 dark:text-yellow-400 tabular-nums">{border}px</span>
+              <span className="font-semibold text-purple-400">Border</span>
+              <span className="font-mono text-purple-400 tabular-nums">{border}px</span>
             </div>
             <input
               type="range"
@@ -135,12 +133,12 @@ export const InteractiveBoxModel: React.FC = () => {
               max={16}
               value={border}
               onChange={(e) => setBorder(Number(e.target.value))}
-              className="w-full accent-yellow-600"
+              className="w-full accent-purple-500 cursor-pointer"
             />
 
             <div className="flex justify-between text-xs">
-              <span className="font-semibold text-amber-700 dark:text-amber-400">Margin</span>
-              <span className="font-mono text-amber-600 dark:text-amber-400 tabular-nums">{margin}px</span>
+              <span className="font-semibold text-amber-400">Margin</span>
+              <span className="font-mono text-amber-400 tabular-nums">{margin}px</span>
             </div>
             <input
               type="range"
@@ -148,21 +146,21 @@ export const InteractiveBoxModel: React.FC = () => {
               max={40}
               value={margin}
               onChange={(e) => setMargin(Number(e.target.value))}
-              className="w-full accent-amber-600"
+              className="w-full accent-amber-500 cursor-pointer"
             />
           </div>
 
           {/* Math summary */}
-          <div className="p-3.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs space-y-1.5">
+          <div className="p-4 rounded-xl border border-white/[0.08] bg-[#111111] text-xs space-y-2">
             <div className="flex justify-between font-mono">
-              <span className="text-slate-500">Rendered Element Width:</span>
-              <span className="font-bold text-slate-900 dark:text-white tabular-nums">{totalRenderedWidth}px</span>
+              <span className="text-zinc-400">Rendered Element Width:</span>
+              <span className="font-bold text-white tabular-nums">{totalRenderedWidth}px</span>
             </div>
             <div className="flex justify-between font-mono">
-              <span className="text-slate-500">Total Space Occupied (+Margin):</span>
-              <span className="font-semibold text-amber-600 dark:text-amber-400 tabular-nums">{totalRenderedWidth + (margin * 2)}px</span>
+              <span className="text-zinc-400">Total Space Occupied (+Margin):</span>
+              <span className="font-semibold text-amber-400 tabular-nums">{totalRenderedWidth + (margin * 2)}px</span>
             </div>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-100 dark:border-slate-800">
+            <p className="text-[11px] text-zinc-400 pt-2 border-t border-white/[0.08] leading-relaxed">
               {boxSizing === 'border-box'
                 ? 'Under border-box, padding and border stay INSIDE the declared width, so your card never blows past its grid column!'
                 : 'Under content-box, padding and borders expand the box size outwards, often creating unwanted horizontal scrollbars.'}

@@ -135,11 +135,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [selectedModuleId, setSelectedModuleId] = useState<string>('web-fundamentals');
   const [selectedLessonId, setSelectedLessonId] = useState<string>('internet-basics');
   
-  // Theme state
+  // Theme state - defaults to premium dark
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     const saved = localStorage.getItem('webcraft_theme');
     if (saved === 'dark' || saved === 'light') return saved;
-    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    return 'dark';
   });
 
   useEffect(() => {

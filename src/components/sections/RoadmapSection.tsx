@@ -4,7 +4,8 @@ import { roadmapModules } from '../../data/roadmapData';
 import { InteractiveWebFlow } from '../InteractiveWebFlow';
 import { InteractiveBoxModel } from '../InteractiveBoxModel';
 import { InteractiveFlexbox } from '../InteractiveFlexbox';
-import { CheckCircle2, Circle, Clock, Copy, Check, ChevronRight, ChevronLeft, StickyNote, Code2, Sparkles, BookOpen } from 'lucide-react';
+import { CheckCircle2, Circle, Clock, Copy, Check, ChevronRight, ChevronLeft, StickyNote, Code2, Sparkles, BookOpen, Layers, Award } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export const RoadmapSection: React.FC = () => {
   const {
@@ -22,6 +23,12 @@ export const RoadmapSection: React.FC = () => {
   const [showSolution, setShowSolution] = useState(false);
   const [notePromptOpen, setNotePromptOpen] = useState(false);
   const [noteContent, setNoteContent] = useState('');
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3000);
+  };
 
   // Find active module & lesson
   const currentModule = roadmapModules.find(m => m.id === selectedModuleId) || roadmapModules[0];
@@ -35,6 +42,7 @@ export const RoadmapSection: React.FC = () => {
   const copyCode = (code: string) => {
     navigator.clipboard.writeText(code);
     setCopiedCode(true);
+    showToast('Code copied to clipboard!');
     setTimeout(() => setCopiedCode(false), 2000);
   };
 
@@ -43,6 +51,7 @@ export const RoadmapSection: React.FC = () => {
       addNote(currentLesson.title, currentModule.title, noteContent.trim());
       setNoteContent('');
       setNotePromptOpen(false);
+      showToast('Note added to your study notebook!');
     }
   };
 
@@ -52,23 +61,38 @@ export const RoadmapSection: React.FC = () => {
   const nextLesson = currentLessonIndex < currentModule.lessons.length - 1 ? currentModule.lessons[currentLessonIndex + 1] : null;
 
   return (
-    <div className="space-y-8 py-6">
+    <div className="space-y-8 py-6 relative">
+      {/* Toast Notification */}
+      <AnimatePresence>
+        {toastMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+            className="fixed top-20 right-6 z-50 flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 text-xs font-semibold shadow-2xl border border-slate-700 dark:border-slate-200"
+          >
+            <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+            <span>{toastMessage}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Header */}
       <div>
-        <div className="flex items-center gap-2 text-xs font-semibold text-blue-600 dark:text-blue-400">
-          <BookOpen className="w-4 h-4" />
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#18181B] text-cyan-400 text-xs font-bold uppercase tracking-wider mb-3 border border-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.15)]">
+          <BookOpen className="w-3.5 h-3.5 text-cyan-400" />
           <span>Curriculum Modules A through H</span>
         </div>
-        <h1 className="text-2xl sm:text-4xl font-bold text-slate-900 dark:text-white mt-1">
-          Complete Web Development Roadmap
+        <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
+          Full-Stack Web <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400">Engineering Roadmap</span>
         </h1>
-        <p className="text-sm text-slate-600 dark:text-slate-300 mt-2 max-w-3xl leading-relaxed">
-          Follow the structured curriculum designed to take you from understanding internet packets to shipping production-grade full-stack web applications with databases and CI/CD pipelines.
+        <p className="text-base text-zinc-400 mt-2 max-w-3xl leading-relaxed">
+          Follow the structured curriculum designed to take you from internet protocols and semantic markup to shipping scalable full-stack applications with databases and CI/CD pipelines.
         </p>
       </div>
 
       {/* Module Horizontal Track Selector */}
-      <div className="flex border-b border-slate-200 dark:border-slate-800 overflow-x-auto pb-2 gap-2">
+      <div className="flex border-b border-white/[0.08] overflow-x-auto pb-3 gap-2.5">
         {roadmapModules.map((mod) => {
           const isSelected = mod.id === currentModule.id;
           const completedInMod = mod.lessons.filter(l => isLessonCompleted(l.id)).length;
@@ -82,24 +106,24 @@ export const RoadmapSection: React.FC = () => {
                 setSelectedLessonId(mod.lessons[0].id);
                 setShowSolution(false);
               }}
-              className={`flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs font-medium whitespace-nowrap transition border ${
+              className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-medium whitespace-nowrap transition-all duration-200 border cursor-pointer ${
                 isSelected
-                  ? 'border-blue-600 bg-blue-50/60 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 shadow-xs'
-                  : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700'
+                  ? 'border-blue-500/80 bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-transparent text-white font-bold shadow-[0_0_20px_rgba(59,130,246,0.3)]'
+                  : 'border-white/[0.08] bg-[#111111] text-zinc-300 hover:border-white/20 hover:text-white'
               }`}
             >
-              <span className={`w-5 h-5 rounded-full flex items-center justify-center font-bold text-[11px] ${
-                isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+              <span className={`w-6 h-6 rounded-lg flex items-center justify-center font-bold text-xs ${
+                isSelected ? 'bg-gradient-to-tr from-blue-600 to-purple-600 text-white shadow-xs' : 'bg-[#18181B] text-zinc-400 border border-white/[0.08]'
               }`}>
                 {mod.letter}
               </span>
               <div className="text-left">
-                <div className="font-semibold">{mod.title}</div>
-                <div className="text-[10px] text-slate-400 font-mono tabular-nums">
-                  {completedInMod}/{mod.lessons.length} done
+                <div className="font-bold text-white">{mod.title}</div>
+                <div className="text-[10px] text-zinc-400 font-mono tabular-nums">
+                  {completedInMod}/{mod.lessons.length} complete
                 </div>
               </div>
-              {allDone && <CheckCircle2 className="w-4 h-4 text-emerald-500 ml-1" />}
+              {allDone && <CheckCircle2 className="w-4 h-4 text-emerald-400 ml-1" />}
             </button>
           );
         })}
@@ -109,43 +133,45 @@ export const RoadmapSection: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Column: Syllabus List */}
         <div className="lg:col-span-4 space-y-4">
-          <div className="p-5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+          <div className="bg-[#111111] p-6 rounded-3xl border border-white/[0.08] shadow-2xl">
+            <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
               <div>
-                <span className="text-[11px] font-mono font-semibold text-blue-600 dark:text-blue-400 uppercase">
+                <span className="text-[11px] font-mono font-bold text-blue-400 uppercase tracking-wider">
                   Module {currentModule.letter}
                 </span>
-                <h3 className="text-base font-bold text-slate-900 dark:text-white mt-0.5">{currentModule.title}</h3>
+                <h3 className="text-lg font-bold text-white mt-0.5">{currentModule.title}</h3>
               </div>
-              <span className="text-xs font-mono px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+              <span className="text-xs font-mono px-2.5 py-0.5 rounded-full bg-[#18181B] text-cyan-400 border border-white/[0.08]">
                 {currentModule.difficulty}
               </span>
             </div>
 
-            <p className="text-xs text-slate-500 dark:text-slate-400 my-3 leading-relaxed">
+            <p className="text-xs text-zinc-400 my-3 leading-relaxed">
               {currentModule.summary}
             </p>
 
             {/* Progress bar */}
-            <div className="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
+            <div className="space-y-1.5 pt-2 border-t border-white/[0.08]">
               <div className="flex justify-between text-xs font-medium">
-                <span className="text-slate-600 dark:text-slate-400">Module Progress</span>
-                <span className="text-blue-600 dark:text-blue-400 font-mono tabular-nums">{modulePercent}%</span>
+                <span className="text-zinc-400">Module Progress</span>
+                <span className="text-cyan-400 font-mono tabular-nums">{modulePercent}%</span>
               </div>
-              <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2 overflow-hidden">
-                <div
-                  className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${modulePercent}%` }}
+              <div className="w-full bg-[#18181B] rounded-full h-2 overflow-hidden border border-white/[0.05]">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${modulePercent}%` }}
+                  transition={{ duration: 0.6 }}
+                  className="bg-gradient-to-r from-blue-500 via-purple-500 to-cyan-400 h-2 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.6)]"
                 />
               </div>
             </div>
 
             {/* Lesson list */}
-            <div className="mt-5 space-y-1.5">
-              <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider px-2">
+            <div className="mt-6 space-y-2">
+              <div className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider px-2">
                 Lessons in this module
               </div>
-              {currentModule.lessons.map((lesson, idx) => {
+              {currentModule.lessons.map((lesson) => {
                 const isSelected = lesson.id === currentLesson.id;
                 const isDone = isLessonCompleted(lesson.id);
 
@@ -156,10 +182,10 @@ export const RoadmapSection: React.FC = () => {
                       setSelectedLessonId(lesson.id);
                       setShowSolution(false);
                     }}
-                    className={`flex items-start gap-2.5 p-2.5 rounded-lg cursor-pointer transition text-xs ${
+                    className={`flex items-start gap-3 p-3 rounded-xl cursor-pointer transition-all duration-200 text-xs ${
                       isSelected
-                        ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-medium border border-blue-200 dark:border-blue-900'
-                        : 'hover:bg-slate-50 dark:hover:bg-slate-850 text-slate-700 dark:text-slate-300'
+                        ? 'bg-[#18181B] text-white font-semibold border border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.2)]'
+                        : 'hover:bg-white/[0.04] text-zinc-300'
                     }`}
                   >
                     <button
@@ -167,19 +193,20 @@ export const RoadmapSection: React.FC = () => {
                       onClick={(e) => {
                         e.stopPropagation();
                         toggleLessonCompletion(lesson.id);
+                        if (!isDone) showToast('Lesson marked complete!');
                       }}
-                      className="mt-0.5 text-slate-400 hover:text-emerald-500 transition"
+                      className="mt-0.5 text-zinc-500 hover:text-emerald-400 transition cursor-pointer"
                       title={isDone ? 'Mark as incomplete' : 'Mark as completed'}
                     >
                       {isDone ? (
-                        <CheckCircle2 className="w-4 h-4 text-emerald-500 fill-emerald-50 dark:fill-emerald-950" />
+                        <CheckCircle2 className="w-4 h-4 text-emerald-400 fill-emerald-500/20" />
                       ) : (
                         <Circle className="w-4 h-4" />
                       )}
                     </button>
                     <div className="flex-1 min-w-0">
-                      <div className="truncate">{lesson.title}</div>
-                      <div className="text-[11px] text-slate-400 truncate">{lesson.description}</div>
+                      <div className="truncate font-semibold text-white">{lesson.title}</div>
+                      <div className="text-[11px] text-zinc-400 truncate">{lesson.description}</div>
                     </div>
                   </div>
                 );
@@ -190,48 +217,57 @@ export const RoadmapSection: React.FC = () => {
 
         {/* Right Column: Detailed Active Lesson View */}
         <div className="lg:col-span-8 space-y-6">
-          <div className="p-6 sm:p-8 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
+          <motion.div 
+            key={currentLesson.id}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="bg-[#111111] p-6 sm:p-10 rounded-3xl border border-white/[0.08] shadow-2xl"
+          >
             {/* Lesson Title & Controls */}
-            <div className="flex flex-wrap items-start justify-between gap-4 pb-6 border-b border-slate-100 dark:border-slate-800">
+            <div className="flex flex-wrap items-start justify-between gap-4 pb-6 border-b border-white/[0.08]">
               <div>
-                <div className="flex items-center gap-2 text-xs text-blue-600 dark:text-blue-400 font-semibold mb-1">
+                <div className="flex items-center gap-2 text-xs text-blue-400 font-bold mb-1.5">
                   <span>Module {currentModule.letter}</span>
                   <span aria-hidden="true">·</span>
                   <span>Estimated: {currentModule.estimatedHours}</span>
                 </div>
-                <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
                   {currentLesson.title}
                 </h2>
-                <p className="text-xs sm:text-sm text-slate-500 mt-1">
+                <p className="text-sm text-zinc-400 mt-1">
                   {currentLesson.description}
                 </p>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2.5">
                 <button
                   onClick={() => setNotePromptOpen(!notePromptOpen)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition"
+                  className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl border border-white/[0.08] bg-[#18181B] hover:bg-[#202024] text-zinc-300 transition cursor-pointer"
                 >
-                  <StickyNote className="w-3.5 h-3.5 text-amber-500" />
+                  <StickyNote className="w-4 h-4 text-amber-400" />
                   <span>Add Note</span>
                 </button>
 
                 <button
-                  onClick={() => toggleLessonCompletion(currentLesson.id)}
-                  className={`flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium rounded-lg transition shadow-xs ${
+                  onClick={() => {
+                    toggleLessonCompletion(currentLesson.id);
+                    if (!isLessonCompleted(currentLesson.id)) showToast('Milestone complete! Great job!');
+                  }}
+                  className={`flex items-center gap-1.5 px-4 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer ${
                     isLessonCompleted(currentLesson.id)
-                      ? 'bg-emerald-600 text-white hover:bg-emerald-700'
-                      : 'bg-blue-600 text-white hover:bg-blue-700'
+                      ? 'bg-emerald-600 text-white hover:bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.35)]'
+                      : 'btn-neon-primary'
                   }`}
                 >
                   {isLessonCompleted(currentLesson.id) ? (
                     <>
-                      <Check className="w-3.5 h-3.5" />
+                      <Check className="w-4 h-4" />
                       <span>Completed</span>
                     </>
                   ) : (
                     <>
-                      <Circle className="w-3.5 h-3.5" />
+                      <Circle className="w-4 h-4" />
                       <span>Mark as Done</span>
                     </>
                   )}
@@ -240,35 +276,42 @@ export const RoadmapSection: React.FC = () => {
             </div>
 
             {/* Quick Note Input (if open) */}
-            {notePromptOpen && (
-              <div className="my-4 p-4 rounded-lg bg-amber-50/60 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 text-xs space-y-2">
-                <span className="font-semibold text-amber-900 dark:text-amber-200 block">Save Note for this Lesson</span>
-                <textarea
-                  value={noteContent}
-                  onChange={(e) => setNoteContent(e.target.value)}
-                  placeholder="Jot down key takeaways, reminders, or questions..."
-                  className="w-full p-2.5 rounded border border-amber-300 dark:border-amber-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white outline-none resize-y"
-                  rows={3}
-                />
-                <div className="flex justify-end gap-2">
-                  <button
-                    onClick={() => setNotePromptOpen(false)}
-                    className="px-2.5 py-1 rounded text-slate-600 dark:text-slate-400 hover:bg-amber-100 dark:hover:bg-amber-900/50"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleSaveNote}
-                    className="px-3 py-1 rounded bg-amber-600 text-white hover:bg-amber-700 font-medium"
-                  >
-                    Save Note
-                  </button>
-                </div>
-              </div>
-            )}
+            <AnimatePresence>
+              {notePromptOpen && (
+                <motion.div 
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="my-5 p-5 rounded-2xl bg-[#18181B] border border-amber-500/30 text-xs space-y-3 overflow-hidden shadow-lg"
+                >
+                  <span className="font-bold text-amber-300 block text-sm">Save Note for this Lesson</span>
+                  <textarea
+                    value={noteContent}
+                    onChange={(e) => setNoteContent(e.target.value)}
+                    placeholder="Jot down key takeaways, reminders, or questions..."
+                    className="w-full p-3 rounded-xl border border-white/[0.1] bg-[#0A0A0A] text-white outline-none resize-y"
+                    rows={3}
+                  />
+                  <div className="flex justify-end gap-2">
+                    <button
+                      onClick={() => setNotePromptOpen(false)}
+                      className="px-3.5 py-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/[0.06] cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleSaveNote}
+                      className="px-4 py-1.5 rounded-lg bg-amber-600 text-white hover:bg-amber-500 font-bold shadow-xs cursor-pointer"
+                    >
+                      Save Note
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Lesson Body Prose */}
-            <div className="prose dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 text-sm leading-relaxed my-6 whitespace-pre-line">
+            <div className="prose prose-invert max-w-none text-zinc-300 text-sm leading-relaxed my-8 whitespace-pre-line">
               {currentLesson.content}
             </div>
 
@@ -279,18 +322,21 @@ export const RoadmapSection: React.FC = () => {
 
             {/* Code Snippet Box */}
             {currentLesson.codeSnippet && (
-              <div className="my-6 rounded-xl overflow-hidden border border-slate-800 bg-slate-950 text-slate-100">
-                <div className="flex items-center justify-between px-4 py-2 bg-slate-900 border-b border-slate-800 text-[11px] font-mono text-slate-400">
-                  <span>Language: {currentLesson.language || 'code'}</span>
+              <div className="my-8 rounded-2xl overflow-hidden border border-white/[0.08] bg-[#0A0A0A] text-zinc-100 shadow-2xl">
+                <div className="flex items-center justify-between px-4 py-2.5 bg-[#000000] border-b border-white/[0.08] text-[11px] font-mono text-zinc-400">
+                  <span className="flex items-center gap-1.5">
+                    <Code2 className="w-3.5 h-3.5 text-blue-400" />
+                    <span>Language: {currentLesson.language || 'code'}</span>
+                  </span>
                   <button
                     onClick={() => copyCode(currentLesson.codeSnippet || '')}
-                    className="flex items-center gap-1 hover:text-white transition"
+                    className="flex items-center gap-1 text-zinc-300 hover:text-white transition cursor-pointer"
                   >
                     {copiedCode ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                     <span>{copiedCode ? 'Copied!' : 'Copy Code'}</span>
                   </button>
                 </div>
-                <div className="p-4 overflow-x-auto text-xs font-mono leading-relaxed">
+                <div className="p-5 overflow-x-auto text-xs font-mono leading-relaxed">
                   <pre className="whitespace-pre">{currentLesson.codeSnippet}</pre>
                 </div>
               </div>
@@ -298,15 +344,15 @@ export const RoadmapSection: React.FC = () => {
 
             {/* Practical Tips */}
             {currentLesson.tips && currentLesson.tips.length > 0 && (
-              <div className="my-6 p-4 rounded-xl bg-blue-50/50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/60 text-xs space-y-2">
-                <div className="font-semibold text-blue-900 dark:text-blue-300 flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-blue-500" />
+              <div className="my-8 p-5 rounded-2xl bg-[#18181B] border border-blue-500/30 text-xs space-y-2.5">
+                <div className="font-bold text-blue-300 flex items-center gap-2 text-sm">
+                  <Sparkles className="w-4 h-4 text-cyan-400" />
                   <span>Senior Engineer Best Practices & Tips</span>
                 </div>
-                <ul className="space-y-1.5 text-slate-600 dark:text-slate-300">
+                <ul className="space-y-2 text-zinc-300">
                   {currentLesson.tips.map((tip, i) => (
-                    <li key={i} className="flex items-start gap-2">
-                      <span className="text-blue-500 font-bold">•</span>
+                    <li key={i} className="flex items-start gap-2.5">
+                      <span className="text-cyan-400 font-bold text-sm leading-none">•</span>
                       <span>{tip}</span>
                     </li>
                   ))}
@@ -316,24 +362,24 @@ export const RoadmapSection: React.FC = () => {
 
             {/* Practical Exercise Box */}
             {currentLesson.exercise && (
-              <div className="my-6 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-xs space-y-3">
+              <div className="my-8 p-5 rounded-2xl bg-[#18181B] border border-white/[0.08] text-xs space-y-3.5">
                 <div className="flex items-center justify-between">
-                  <div className="font-semibold text-slate-900 dark:text-white flex items-center gap-1.5">
-                    <Code2 className="w-4 h-4 text-emerald-500" />
+                  <div className="font-bold text-white flex items-center gap-2 text-sm">
+                    <Code2 className="w-4 h-4 text-emerald-400" />
                     <span>Hands-On Mini Exercise</span>
                   </div>
                   {currentLesson.exercise.solution && (
                     <button
                       onClick={() => setShowSolution(!showSolution)}
-                      className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
+                      className="text-cyan-400 hover:underline font-bold text-xs cursor-pointer"
                     >
                       {showSolution ? 'Hide Solution' : 'Reveal Solution'}
                     </button>
                   )}
                 </div>
-                <p className="text-slate-600 dark:text-slate-300">{currentLesson.exercise.prompt}</p>
+                <p className="text-zinc-300 text-xs leading-relaxed">{currentLesson.exercise.prompt}</p>
                 {showSolution && currentLesson.exercise.solution && (
-                  <div className="p-3 rounded bg-slate-900 text-slate-200 font-mono text-[11px] overflow-x-auto">
+                  <div className="p-4 rounded-xl bg-[#0A0A0A] border border-white/[0.08] text-zinc-200 font-mono text-[11px] overflow-x-auto shadow-inner">
                     <pre className="whitespace-pre">{currentLesson.exercise.solution}</pre>
                   </div>
                 )}
@@ -341,14 +387,15 @@ export const RoadmapSection: React.FC = () => {
             )}
 
             {/* Navigation buttons: Prev and Next */}
-            <div className="flex items-center justify-between pt-6 mt-6 border-t border-slate-100 dark:border-slate-800 text-xs">
+            <div className="flex items-center justify-between pt-6 mt-8 border-t border-white/[0.08] text-xs">
               {prevLesson ? (
                 <button
                   onClick={() => {
                     setSelectedLessonId(prevLesson.id);
                     setShowSolution(false);
+                    window.scrollTo({ top: 300, behavior: 'smooth' });
                   }}
-                  className="flex items-center gap-1 px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
+                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-white/[0.08] bg-[#18181B] text-zinc-300 hover:text-white hover:bg-[#202024] font-medium transition cursor-pointer"
                 >
                   <ChevronLeft className="w-4 h-4" />
                   <span className="truncate max-w-[140px] sm:max-w-xs">{prevLesson.title}</span>
@@ -360,15 +407,16 @@ export const RoadmapSection: React.FC = () => {
                   onClick={() => {
                     setSelectedLessonId(nextLesson.id);
                     setShowSolution(false);
+                    window.scrollTo({ top: 300, behavior: 'smooth' });
                   }}
-                  className="flex items-center gap-1 px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 font-medium shadow-xs"
+                  className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl btn-neon-primary font-bold transition cursor-pointer"
                 >
                   <span className="truncate max-w-[140px] sm:max-w-xs">{nextLesson.title}</span>
                   <ChevronRight className="w-4 h-4" />
                 </button>
               ) : <div />}
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </div>

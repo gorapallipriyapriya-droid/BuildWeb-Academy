@@ -78,17 +78,17 @@ export const CodingChallengesRunner: React.FC = () => {
   };
 
   return (
-    <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm overflow-hidden my-6">
+    <div className="rounded-2xl border border-white/[0.08] bg-[#111111] shadow-xl overflow-hidden my-6">
       {/* Selector Tabs */}
-      <div className="flex border-b border-slate-200 dark:border-slate-800 overflow-x-auto bg-slate-50 dark:bg-slate-950 p-2 gap-2">
+      <div className="flex border-b border-white/[0.08] overflow-x-auto bg-[#0A0A0A] p-2.5 gap-2">
         {codingChallenges.map((c) => (
           <button
             key={c.id}
             onClick={() => handleSelectChallenge(c.id)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition ${
+            className={`px-3.5 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition cursor-pointer ${
               selectedChallengeId === c.id
-                ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-xs border border-slate-200 dark:border-slate-700'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                ? 'bg-[#18181B] text-cyan-400 font-bold border border-cyan-500/40 shadow-[0_0_12px_rgba(6,182,212,0.25)]'
+                : 'text-zinc-400 hover:text-white'
             }`}
           >
             {c.title}
@@ -96,49 +96,49 @@ export const CodingChallengesRunner: React.FC = () => {
         ))}
       </div>
 
-      <div className="p-5">
-        <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+      <div className="p-6">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
           <div>
-            <span className="text-xs text-blue-600 dark:text-blue-400 font-semibold">{activeChallenge.category}</span>
-            <h4 className="text-lg font-bold text-slate-900 dark:text-white">{activeChallenge.title}</h4>
+            <span className="text-xs text-blue-400 font-semibold">{activeChallenge.category}</span>
+            <h4 className="text-xl font-bold text-white">{activeChallenge.title}</h4>
           </div>
           <div className="flex items-center gap-2">
-            <span className={`text-xs px-2 py-0.5 rounded font-medium ${
-              activeChallenge.difficulty === 'Easy' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
+            <span className={`text-xs px-2.5 py-0.5 rounded-full font-mono font-medium ${
+              activeChallenge.difficulty === 'Easy' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
             }`}>
               {activeChallenge.difficulty}
             </span>
             <button
               onClick={() => setShowSolution(!showSolution)}
-              className="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-400 hover:text-blue-600 px-2 py-1 rounded border border-slate-200 dark:border-slate-700"
+              className="flex items-center gap-1.5 text-xs text-zinc-300 hover:text-white px-3 py-1.5 rounded-lg border border-white/[0.08] bg-[#18181B] hover:bg-[#202024] cursor-pointer"
             >
-              <Lightbulb className="w-3.5 h-3.5" />
+              <Lightbulb className="w-3.5 h-3.5 text-amber-400" />
               <span>{showSolution ? 'Hide Solution' : 'View Solution'}</span>
             </button>
           </div>
         </div>
 
-        <p className="text-sm text-slate-600 dark:text-slate-300 mb-4 leading-relaxed">
+        <p className="text-sm text-zinc-300 mb-5 leading-relaxed">
           {activeChallenge.description}
         </p>
 
         {showSolution && (
-          <div className="mb-4 p-3 rounded-lg bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900 text-xs font-mono text-blue-900 dark:text-blue-200 overflow-x-auto">
-            <div className="font-sans font-semibold text-[11px] text-blue-700 dark:text-blue-300 mb-1">Recommended Solution:</div>
+          <div className="mb-5 p-4 rounded-xl bg-[#18181B] border border-blue-500/30 text-xs font-mono text-cyan-200 overflow-x-auto">
+            <div className="font-sans font-semibold text-[11px] text-cyan-400 mb-1.5">Recommended Solution:</div>
             <pre className="whitespace-pre">{activeChallenge.solution}</pre>
           </div>
         )}
 
         {/* Code Editor */}
-        <div className="rounded-lg overflow-hidden border border-slate-800 bg-slate-950 text-slate-100 mb-4">
-          <div className="flex justify-between items-center px-3 py-1.5 bg-slate-900 border-b border-slate-800 text-[11px] font-mono text-slate-400">
+        <div className="rounded-xl overflow-hidden border border-white/[0.08] bg-[#0A0A0A] text-zinc-100 mb-4 shadow-inner">
+          <div className="flex justify-between items-center px-4 py-2 bg-[#000000] border-b border-white/[0.08] text-[11px] font-mono text-zinc-400">
             <span>JavaScript Live Solution</span>
             <button
               onClick={() => {
                 setUserCode(activeChallenge.starterCode);
                 setTestResults(null);
               }}
-              className="flex items-center gap-1 hover:text-white"
+              className="flex items-center gap-1 hover:text-white cursor-pointer"
             >
               <RotateCcw className="w-3 h-3" />
               <span>Reset</span>
@@ -149,7 +149,7 @@ export const CodingChallengesRunner: React.FC = () => {
             onChange={(e) => setUserCode(e.target.value)}
             spellCheck={false}
             rows={8}
-            className="w-full p-3 font-mono text-xs bg-slate-950 text-slate-100 outline-none leading-relaxed resize-y"
+            className="w-full p-4 font-mono text-xs bg-[#0A0A0A] text-zinc-100 outline-none leading-relaxed resize-y"
           />
         </div>
 
@@ -157,7 +157,7 @@ export const CodingChallengesRunner: React.FC = () => {
         <div className="flex items-center justify-between">
           <button
             onClick={runTests}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs shadow-xs"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl btn-neon-primary text-xs font-bold cursor-pointer"
           >
             <Play className="w-3.5 h-3.5" />
             <span>Run Test Cases</span>
@@ -166,21 +166,21 @@ export const CodingChallengesRunner: React.FC = () => {
 
         {/* Test Case Results */}
         {testResults && (
-          <div className="mt-4 p-3.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-xs space-y-2">
-            <div className="font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+          <div className="mt-5 p-4 rounded-xl border border-white/[0.08] bg-[#0A0A0A] text-xs space-y-2">
+            <div className="font-semibold text-white flex items-center gap-1.5">
               <span>Test Results:</span>
-              <span className={`tabular-nums font-mono ${testResults.every(r => r.passed) ? 'text-emerald-600' : 'text-amber-600'}`}>
+              <span className={`tabular-nums font-mono ${testResults.every(r => r.passed) ? 'text-emerald-400' : 'text-amber-400'}`}>
                 {testResults.filter(r => r.passed).length}/{testResults.length} Passing
               </span>
             </div>
             {testResults.map((res, i) => (
               <div key={i} className="flex items-start gap-2 text-xs">
                 {res.passed ? (
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                 ) : (
-                  <XCircle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
+                  <XCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
                 )}
-                <span className={`font-mono ${res.passed ? 'text-slate-700 dark:text-slate-300' : 'text-rose-600 dark:text-rose-400'}`}>
+                <span className={`font-mono ${res.passed ? 'text-zinc-300' : 'text-rose-400'}`}>
                   {res.message}
                 </span>
               </div>

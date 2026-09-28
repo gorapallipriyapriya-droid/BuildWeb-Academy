@@ -2,9 +2,11 @@ import React from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
+import { BackgroundEffects } from './components/BackgroundEffects';
 import { SearchModal } from './components/SearchModal';
 import { CertificateModal } from './components/CertificateModal';
 import { SitemapModal } from './components/SitemapModal';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // Section Views
 import { IntroSection } from './components/sections/IntroSection';
@@ -24,31 +26,41 @@ const MainContent: React.FC = () => {
   const { currentSection } = useApp();
 
   return (
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 min-h-[80vh]">
-      {currentSection === 'intro' && <IntroSection />}
-      {currentSection === 'roadmap' && <RoadmapSection />}
-      {currentSection === 'tools' && <ToolsSection />}
-      {currentSection === 'process' && <ProcessSection />}
-      {currentSection === 'projects' && <ProjectsSection />}
-      {currentSection === 'careers' && <CareersSection />}
-      {currentSection === 'interview' && <InterviewSection />}
-      {currentSection === 'practice' && <PracticeSection />}
-      {currentSection === 'playground' && (
-        <div className="py-8 space-y-6">
-          <div>
-            <h1 className="text-2xl sm:text-4xl font-bold text-slate-900 dark:text-white">
-              Interactive Web Playground
-            </h1>
-            <p className="text-sm text-slate-600 dark:text-slate-300 mt-2 max-w-3xl leading-relaxed">
-              Experiment with HTML, CSS, and modern JavaScript in real time with an instant browser iframe preview, built-in developer console, and ready-made interactive starter templates.
-            </p>
-          </div>
-          <InteractiveCodePlayground />
-        </div>
-      )}
-      {currentSection === 'resources' && <ResourcesSection />}
-      {currentSection === 'dashboard' && <StudentDashboardSection />}
-      {currentSection === 'forum' && <ForumSection />}
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 min-h-[85vh] relative z-10">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={currentSection}
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -12 }}
+          transition={{ duration: 0.26, ease: [0.16, 1, 0.3, 1] }}
+        >
+          {currentSection === 'intro' && <IntroSection />}
+          {currentSection === 'roadmap' && <RoadmapSection />}
+          {currentSection === 'tools' && <ToolsSection />}
+          {currentSection === 'process' && <ProcessSection />}
+          {currentSection === 'projects' && <ProjectsSection />}
+          {currentSection === 'careers' && <CareersSection />}
+          {currentSection === 'interview' && <InterviewSection />}
+          {currentSection === 'practice' && <PracticeSection />}
+          {currentSection === 'playground' && (
+            <div className="py-8 space-y-6">
+              <div>
+                <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+                  Interactive Web Playground
+                </h1>
+                <p className="text-sm text-zinc-400 mt-2 max-w-3xl leading-relaxed">
+                  Experiment with HTML, CSS, and modern JavaScript in real time with an instant browser iframe preview, built-in developer console, and ready-made interactive starter templates.
+                </p>
+              </div>
+              <InteractiveCodePlayground />
+            </div>
+          )}
+          {currentSection === 'resources' && <ResourcesSection />}
+          {currentSection === 'dashboard' && <StudentDashboardSection />}
+          {currentSection === 'forum' && <ForumSection />}
+        </motion.div>
+      </AnimatePresence>
     </main>
   );
 };
@@ -56,9 +68,10 @@ const MainContent: React.FC = () => {
 export default function App() {
   return (
     <AppProvider>
-      <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-200">
+      <div className="min-h-screen flex flex-col bg-[#000000] text-white selection:bg-blue-600/30 selection:text-white relative overflow-hidden">
+        <BackgroundEffects />
         <Navbar />
-        <div className="flex-1">
+        <div className="flex-1 relative z-10">
           <MainContent />
         </div>
         <Footer />
