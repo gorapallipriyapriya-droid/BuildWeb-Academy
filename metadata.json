@@ -1,0 +1,6 @@
+{
+  "name": "WebCraft Academy - Learn Web Development from Scratch",
+  "description": "A comprehensive, beginner-friendly educational platform teaching students how to build modern websites from scratch with roadmaps, interactive code playground, quizzes, and project tutorials.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
